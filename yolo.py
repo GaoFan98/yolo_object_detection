@@ -8,8 +8,8 @@ capture = cv2.VideoCapture(0)
 width = 320
 height = 320
 # higher is more strict rules applies
-treshhold = 0.7
-nms_treshhold = 0.2
+treshhold = 0.6
+nms_treshhold = 0.3
 
 # fetch coco dataset class names to list
 class_file = 'coco.names'
@@ -51,7 +51,7 @@ def objDetection(output, image):
             if conf > treshhold:
                 # convert from percentage to pixels of image
                 # change values in order to change detection box area
-                w, h = int(detection[0] * img_width), int(detection[2] * img_height),
+                w, h = int(detection[0] * img_width), int(detection[5] * img_height),
                 # formula to get center point x,y => actual_width - width/2
                 #                                    actual_height - height/2
                 cent_x, cent_y = int((detection[0]) * img_width - w / 2), int((detection[0]) * img_height - h / 2)
