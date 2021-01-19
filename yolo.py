@@ -8,6 +8,7 @@ capture = cv2.VideoCapture(0)
 width = 320
 height = 320
 treshhold = 0.6
+nms_treshhold = 0.3
 
 # fetch coco dataset class names to list
 class_file = 'coco.names'
@@ -55,6 +56,21 @@ def objDetection(output, image):
                 bounding_box.append([cent_x, cent_y, w, h])
                 class_ids.append(cl_id)
                 confidence.append(float(conf))
+
+    # remove overlaping boxes
+    keep_box_index = cv2.dnn.NMSBoxes(bounding_box, confidence, treshhold, nms_treshhold)
+
+    for index in keep_box_index:
+        index = index[0]
+        box = bounding_box[index]
+        # extract box parameterd => x,y, width,height
+        cent_x, cent_y, w, h = box[0], box[1], box[2], box[3]
+        # draw box
+        # x,y centroids + corners of image + box color + thickness level
+        cv2.rectangle(image, (cent_x, cent_y), (cent_x + w, cent_y + h), (255, 0, 255), 2)
+        # return class name by index, return confidence score of object, detect cetroid of x and y, font, scale, color, thickness
+        cv2.putText(image, f'{class_names[class_ids[index]]} {confidence[index]}', (cent_x, cent_y - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
 
 
 while True:
