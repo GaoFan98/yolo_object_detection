@@ -7,6 +7,7 @@ capture = cv2.VideoCapture(0)
 # image parameters
 width = 320
 height = 320
+treshhold = 0.6
 
 # fetch coco dataset class names to list
 class_file = 'coco.names'
@@ -30,6 +31,32 @@ net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
 # run on CPU
 net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
+
+# DETECT OBJECTS
+def objDetection(output, image):
+    img_height, img_width, img_channels = image.shape
+    bounding_box = []
+    class_ids = []
+    confidence = []
+
+    for out in output:
+        for detection in out:
+            scores = detection[5:]
+            # find index of max value and its' confidence score/probability
+            cl_id = np.argmax(scores)
+            conf = scores[cl_id]
+            # get values greater than treshhold
+            if conf > treshhold:
+                # convert from percentage to pixels of image
+                h, w = int(detection[2] * img_height), int(detection[3] * img_width)
+                # formula to get center point x,y => actual_width - width/2
+                #                                    actual_height - height/2
+                cent_x, cent_y = int((detection[0]) * img_width - w / 2), int((detection[0]) * img_height - h / 2)
+                bounding_box.append([cent_x, cent_y, w, h])
+                class_ids.append(cl_id)
+                confidence.append(float(conf))
+
+
 while True:
     # RUN THE CAMERA
     success, image = capture.read()
@@ -48,6 +75,8 @@ while True:
     # send images to net
     # [85] => 80 classes + width + height + X center + Y center + confidence (probability of object presents in frame)
     output = net.forward(outputLayerNames)
+
+    objDetection(output, image)
 
     # show image we want to display
     cv2.imshow('Image', image)
