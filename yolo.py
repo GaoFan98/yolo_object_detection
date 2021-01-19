@@ -7,6 +7,7 @@ capture = cv2.VideoCapture(0)
 # image parameters
 width = 320
 height = 320
+# higher is more strict rules applies
 treshhold = 0.7
 nms_treshhold = 0.2
 
@@ -49,6 +50,7 @@ def objDetection(output, image):
             # get values greater than treshhold
             if conf > treshhold:
                 # convert from percentage to pixels of image
+                # change values in order to change detection box area
                 w, h = int(detection[0] * img_width), int(detection[2] * img_height),
                 # formula to get center point x,y => actual_width - width/2
                 #                                    actual_height - height/2
