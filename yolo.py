@@ -7,8 +7,8 @@ capture = cv2.VideoCapture(0)
 # image parameters
 width = 320
 height = 320
-treshhold = 0.6
-nms_treshhold = 0.3
+treshhold = 0.7
+nms_treshhold = 0.2
 
 # fetch coco dataset class names to list
 class_file = 'coco.names'
